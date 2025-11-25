@@ -1,0 +1,5 @@
+Зона 1: adress
+Зона 2: adress
+Зона 3: adress
+Зона 4: adress
+Зона 5: adress
