@@ -28,6 +28,7 @@ class MainWidget(QMainWindow):
             for i in range(len(self.zones)):
                 self.zones[i].append(i)
         self.allListWidget.addItems([i[0] for i in self.zones])
+        self.lcdNumber.display(str(len(self.zones)))
 
 
 
@@ -50,6 +51,7 @@ class MainWidget(QMainWindow):
         self.onButton.setEnabled(False)
         self.offButton.setEnabled(True)
         self.onListWidget.addItem(self.currentZone[0])
+        self.lcdNumber_2.display(str(self.onListWidget.count()))
 
     def zone_disable(self):
         self.currentZone[-2] = False
@@ -58,6 +60,7 @@ class MainWidget(QMainWindow):
         for i in range(self.onListWidget.count()):
             if self.currentZone[0] == self.onListWidget.item(i).text():
                 self.onListWidget.takeItem(i)
+        self.lcdNumber_2.display(str(self.onListWidget.count()))
 
 
 
