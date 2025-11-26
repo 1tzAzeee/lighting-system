@@ -1,9 +1,9 @@
 import sys
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog
 import serial.tools.list_ports
-
+from datetime import datetime as dt
 
 serialInst = serial.Serial()
 serialInst.baudrate = 9600
@@ -11,14 +11,21 @@ serialInst.port = "COM1"
 serialInst.open()
 
 
+class CustomDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('assets/UI/dialog1.ui', self)
+        self.setWindowTitle("Ошибка")
+
+
 class MainWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         self.zones = []
         self.currentZone = []
+        self.enabledZone = []
         self.initUI()
         self.connects()
-
 
     def initUI(self):
         uic.loadUi('assets/UI/mainWindow.ui', self)
@@ -30,12 +37,11 @@ class MainWidget(QMainWindow):
         self.allListWidget.addItems([i[0] for i in self.zones])
         self.lcdNumber.display(str(len(self.zones)))
 
-
-
     def connects(self):
         self.allListWidget.currentItemChanged.connect(self.on_item_changed)
         self.onButton.clicked.connect(self.zone_enable)
         self.offButton.clicked.connect(self.zone_disable)
+        self.logSaveButton.triggered.connect(self.saveLog)
 
     def on_item_changed(self, current, previous):
         zone = current.text()
@@ -47,23 +53,40 @@ class MainWidget(QMainWindow):
         self.offButton.setEnabled(self.currentZone[-2])
 
     def zone_enable(self):
-        self.currentZone[-2] = True
-        self.onButton.setEnabled(False)
-        self.offButton.setEnabled(True)
-        self.onListWidget.addItem(self.currentZone[0])
-        self.lcdNumber_2.display(str(self.onListWidget.count()))
+        if not self.enabledZone:
+            self.currentZone[-2] = True
+            self.onButton.setEnabled(False)
+            self.offButton.setEnabled(True)
+            self.enabledZone = self.currentZone.copy()
+            self.enZoneLabel.setText(self.enabledZone[0])
+            self.logUpdate(self.currentZone, "on")
+        else:
+            dialog = CustomDialog()
+            result = dialog.exec()
 
     def zone_disable(self):
         self.currentZone[-2] = False
         self.onButton.setEnabled(True)
         self.offButton.setEnabled(False)
-        for i in range(self.onListWidget.count()):
-            if self.currentZone[0] == self.onListWidget.item(i).text():
-                self.onListWidget.takeItem(i)
-        self.lcdNumber_2.display(str(self.onListWidget.count()))
+        self.enabledZone.clear()
+        self.enZoneLabel.setText('')
+        self.logUpdate(self.currentZone, "off")
 
+    def logUpdate(self, zone, stat):
+        dnow = dt.now().strftime("%H:%M %d.%m.%Y")
+        if stat == "on":
+            self.logText.append(f"{dnow} {zone[0]} включена")
+        elif stat == "off":
+            self.logText.append(f"{dnow} {zone[0]} выключена")
+        elif stat == "saveLog":
+            self.logText.append(f"{dnow} Сохранён файл журнала")
 
-
+    def saveLog(self):
+        dnow = dt.now().strftime("%d%m%Y%H%M")
+        with open(f"log{dnow}", "w", encoding="utf-8") as f:
+            data = self.logText.toPlainText().split('\n')
+            for i in data:
+                f.write(f"{i}\n")
 
 
 if __name__ == "__main__":

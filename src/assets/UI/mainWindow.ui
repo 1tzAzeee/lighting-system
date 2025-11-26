@@ -57,34 +57,6 @@
      <item>
       <widget class="QListWidget" name="allListWidget"/>
      </item>
-     <item>
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="font">
-        <font>
-         <family>MS PGothic</family>
-         <pointsize>20</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Включенные зоны</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QListWidget" name="onListWidget"/>
-     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
@@ -209,7 +181,7 @@
      <rect>
       <x>420</x>
       <y>410</y>
-      <width>371</width>
+      <width>181</width>
       <height>51</height>
      </rect>
     </property>
@@ -227,30 +199,43 @@
        </property>
       </widget>
      </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>410</y>
+      <width>181</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="label_2">
        <property name="font">
         <font>
-         <family>MS PGothic</family>
          <pointsize>15</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Включено:</string>
+        <string>Сейчас работает:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="enZoneLabel">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QLCDNumber" name="lcdNumber_2">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>480</y>
-      <width>151</width>
-      <height>41</height>
-     </rect>
-    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -266,12 +251,12 @@
     <property name="title">
      <string>Файл Журнала</string>
     </property>
-    <addaction name="action"/>
+    <addaction name="logSaveButton"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action">
+  <action name="logSaveButton">
    <property name="text">
     <string>Сохранить</string>
    </property>
