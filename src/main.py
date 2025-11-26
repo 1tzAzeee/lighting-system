@@ -11,7 +11,7 @@ serialInst.port = "COM1"
 serialInst.open()
 
 
-class CustomDialog(QDialog):
+class errorDialog(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('assets/UI/dialog1.ui', self)
@@ -54,14 +54,19 @@ class MainWidget(QMainWindow):
 
     def zone_enable(self):
         if not self.enabledZone:
-            self.currentZone[-2] = True
-            self.onButton.setEnabled(False)
-            self.offButton.setEnabled(True)
-            self.enabledZone = self.currentZone.copy()
-            self.enZoneLabel.setText(self.enabledZone[0])
-            self.logUpdate(self.currentZone, "on")
+            try:
+                self.currentZone[-2] = True
+                self.onButton.setEnabled(False)
+                self.offButton.setEnabled(True)
+                self.enabledZone = self.currentZone.copy()
+                self.enZoneLabel.setText(self.enabledZone[0])
+                self.logUpdate(self.currentZone, "on")
+                serialInst.write(f"on {self.currentZone[-1]}".encode("utf-8"))
+                print(f"on {self.currentZone[-1]}".encode("utf-8"))
+            except Exception:
+                pass
         else:
-            dialog = CustomDialog()
+            dialog = errorDialog()
             result = dialog.exec()
 
     def zone_disable(self):
@@ -71,6 +76,8 @@ class MainWidget(QMainWindow):
         self.enabledZone.clear()
         self.enZoneLabel.setText('')
         self.logUpdate(self.currentZone, "off")
+        print(f"off {self.currentZone[-1]}".encode("utf-8"))
+        serialInst.write(f"off {self.currentZone[-1]}".encode("utf-8"))
 
     def logUpdate(self, zone, stat):
         dnow = dt.now().strftime("%H:%M %d.%m.%Y")
