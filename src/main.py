@@ -7,7 +7,18 @@ from datetime import datetime as dt
 
 serialInst = serial.Serial()
 serialInst.baudrate = 9600
-serialInst.port = "COM1"
+ports = serial.tools.list_ports.comports()
+temp = ports.copy()
+p = False
+while not p:
+    temp = ports.copy()
+    ports = serial.tools.list_ports.comports()
+    print([i.description for i in ports])
+    for i in ports:
+        if "CH340" in i.description or "Arduino" in i.description:
+            port = i
+            serialInst.port = port.name
+            p = True
 serialInst.open()
 
 
@@ -90,7 +101,7 @@ class MainWidget(QMainWindow):
 
     def saveLog(self):
         dnow = dt.now().strftime("%d%m%Y%H%M")
-        with open(f"log{dnow}", "w", encoding="utf-8") as f:
+        with open(f"log{dnow}.txt", "w", encoding="utf-8") as f:
             data = self.logText.toPlainText().split('\n')
             for i in data:
                 f.write(f"{i}\n")
