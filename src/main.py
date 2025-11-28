@@ -30,10 +30,9 @@ class MainWidget(QMainWindow):
 
 
     def setup_timer(self):
-        # Таймер для автоматической проверки подключения каждые 2 секунды
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_arduino)
-        self.timer.start(2000)  # Проверка каждые 2 секунды
+        self.timer.start(2000)
 
     def check_arduino(self):
         ports = serial.tools.list_ports.comports()
@@ -121,4 +120,5 @@ if __name__ == "__main__":
     window = MainWidget()
     window.show()
     app.exec()
+    serialInst.write("off 1".encode("utf-8"))
     serialInst.close()
