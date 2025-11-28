@@ -1,25 +1,13 @@
 import sys
 
 from PyQt6 import uic
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog
 import serial.tools.list_ports
 from datetime import datetime as dt
 
 serialInst = serial.Serial()
 serialInst.baudrate = 9600
-ports = serial.tools.list_ports.comports()
-temp = ports.copy()
-p = False
-while not p:
-    temp = ports.copy()
-    ports = serial.tools.list_ports.comports()
-    print([i.description for i in ports])
-    for i in ports:
-        if "CH340" in i.description or "Arduino" in i.description:
-            port = i
-            serialInst.port = port.name
-            p = True
-serialInst.open()
 
 
 class errorDialog(QDialog):
@@ -35,8 +23,29 @@ class MainWidget(QMainWindow):
         self.zones = []
         self.currentZone = []
         self.enabledZone = []
+        self.arduino_connected = False
+        self.setup_timer()
         self.initUI()
         self.connects()
+
+
+    def setup_timer(self):
+        # Таймер для автоматической проверки подключения каждые 2 секунды
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.check_arduino)
+        self.timer.start(2000)  # Проверка каждые 2 секунды
+
+    def check_arduino(self):
+        ports = serial.tools.list_ports.comports()
+        print([i.description for i in ports])
+        for i in ports:
+            if "CH340" in i.description or "Arduino" in i.description:
+                port = i
+                serialInst.port = port.name
+                self.arduino_connected = True
+                serialInst.open()
+                self.timer.stop()
+                self.label_4.setVisible(False)
 
     def initUI(self):
         uic.loadUi('assets/UI/mainWindow.ui', self)
