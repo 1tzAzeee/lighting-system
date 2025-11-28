@@ -61,6 +61,11 @@ class MainWidget(QMainWindow):
         self.onButton.clicked.connect(self.zone_enable)
         self.offButton.clicked.connect(self.zone_disable)
         self.logSaveButton.triggered.connect(self.saveLog)
+        QApplication.instance().aboutToQuit.connect(self.on_about_to_quit)
+
+    def on_about_to_quit(self):
+        if self.arduino_connected:
+            serialInst.write("off 1".encode("utf-8"))
 
     def on_item_changed(self, current, previous):
         zone = current.text()
@@ -120,5 +125,4 @@ if __name__ == "__main__":
     window = MainWidget()
     window.show()
     app.exec()
-    serialInst.write("off 1".encode("utf-8"))
     serialInst.close()
